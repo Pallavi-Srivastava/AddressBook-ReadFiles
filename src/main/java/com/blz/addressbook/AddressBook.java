@@ -168,7 +168,7 @@ public class AddressBook {
 
 	public void addDataToFile(String firstName, String lastName, String address, String city, String state,
 			String phoneNumber, String zip, String email, String addressBookName) {
-		System.out.println("Enter address book name: ");
+		System.out.println("Enter name for txt written file : ");
 		String fileName = sc.nextLine();
 		File file = new File("E:\\Fellowship\\STS\\File\\" + fileName + ".txt");
 		if (!file.exists()) {
@@ -191,7 +191,7 @@ public class AddressBook {
 	}
 
 	public void readDataFromFile() {
-		System.out.println("Enter address book name: ");
+		System.out.println("Enter address book name : ");
 		String fileName = sc.nextLine();
 		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + fileName + ".txt");
 		try {
@@ -202,18 +202,23 @@ public class AddressBook {
 	}
 
 	public void addDataToCSVFile(String addressBookName) throws IOException {
-		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + addressBookName + ".csv");
+		System.out.println("Enter name for csv written file : ");
+		String fileName = sc.nextLine();
+		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + fileName + ".csv");
+		
 		if (Files.notExists(filePath))
 			Files.createFile(filePath);
 		File file = new File(String.valueOf(filePath));
 
 		try {
-			FileWriter outputfile = new FileWriter(file);
+			FileWriter outputfile = new FileWriter(file,true);
 			CSVWriter writer = new CSVWriter(outputfile);
 			List<String[]> data = new ArrayList<>();
 			for (PersonDetails detail : lst) {
-				data.add(new String[] { detail.firstName, detail.lastName, detail.address, detail.city, detail.state,
-						detail.phoneNo, detail.zip, detail.email });
+				data.add(new String[] { "Contact:" + "\n1.First name: " + detail.firstName + "\n2.Last name: "
+						+ detail.lastName + "\n3.Address: " + detail.address + "\n4.City: " + detail.city
+						+ "\n5.State: " + detail.state + "\n6.Phone number: " + detail.phoneNo + "\n7.Zip: "
+						+ detail.zip + "\n8.email: " + detail.email + "\n" });
 			}
 			writer.writeAll(data);
 			writer.close();
@@ -222,10 +227,12 @@ public class AddressBook {
 		}
 	}
 
-	public void readDataFromCSVFile(String addressBookName) {
+	public void readDataFromCSVFile() {
+		System.out.println("Enter address book name : ");
+		String fileName = sc.nextLine();
 		CSVReader reader = null;
 		try {
-			reader = new CSVReader(new FileReader("E:\\Fellowship\\STS\\File\\" + addressBookName + ".csv"));
+			reader = new CSVReader(new FileReader("E:\\Fellowship\\STS\\File\\" + fileName + ".csv"));
 			String[] nextLine;
 			while ((nextLine = reader.readNext()) != null) {
 				for (String token : nextLine) {
@@ -237,9 +244,11 @@ public class AddressBook {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void addDataToJSONFile(String addressBookName) throws IOException {
-		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + addressBookName + ".json");
+		System.out.println("Enter name for json written file : ");
+		String fileName = sc.nextLine();
+		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + fileName + ".json");
 		Gson gson = new Gson();
 		String json = gson.toJson(lst);
 		FileWriter writer = new FileWriter(String.valueOf(filePath));
@@ -247,8 +256,10 @@ public class AddressBook {
 		writer.close();
 	}
 
-	public void readDataFromJSONFile(String addressBookName) throws FileNotFoundException {
-		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + addressBookName + ".json");
+	public void readDataFromJSONFile() throws FileNotFoundException {
+		System.out.println("Enter address book name : ");
+		String fileName = sc.nextLine();
+		Path filePath = Paths.get("E:\\Fellowship\\STS\\File\\" + fileName + ".json");
 		Gson gson = new Gson();
 		BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath)));
 		PersonDetails[] data = gson.fromJson(br, PersonDetails[].class);
@@ -260,9 +271,8 @@ public class AddressBook {
 			System.out.println("City : " + details.city);
 			System.out.println("State : " + details.state);
 			System.out.println("Zip : " + details.zip);
-			System.out.println("Phone number : " + details.phoneNo);
+			System.out.println("Phone no : " + details.phoneNo);
 			System.out.println("Email : " + details.email);
 		}
 	}
-
 }

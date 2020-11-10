@@ -130,13 +130,15 @@ public class AddressBookMain {
 				System.out.println("Successfully Added to CSV file");
 				break;
 			case 12:
-				addressBook.readDataFromCSVFile(addressBookName);
+				addressBook.readDataFromCSVFile();
+				break;
 			case 13:
 				addressBook.addContact(addressBookName);
 				System.out.println("Successfully Added to JSON file");
 				break;
 			case 14:
-				addressBook.readDataFromJSONFile(addressBookName);
+				addressBook.readDataFromJSONFile();
+				break;
 			case 15:
 				addressObj.addAddressBook();
 				flag = 0;

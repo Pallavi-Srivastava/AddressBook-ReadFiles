@@ -131,6 +131,7 @@ public class AddressBookMain {
 				break;
 			case 12:
 				addressBook.readDataFromCSVFile();
+				break;
 			case 13:
 				addressObj.addAddressBook();
 				flag = 0;

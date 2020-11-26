@@ -1,14 +1,18 @@
 package com.blz.addressbook;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.blz.addressbook.AddressBookService.IOService;
 public class AddressBookService {
 
 	public enum IOService {
-		DB_IO
+		DB_IO, FILE_IO
 	}
 
 	private List<PersonDetails> addressBookList;
@@ -65,40 +69,41 @@ public class AddressBookService {
 	}
 
 	public void addNewContact(String firstName, String lastName, String address, String city, String state, int zip,
-			int phoneNumber, String email) throws AddressBookException {
+			int phoneNumber, String email) throws AddressBookException, SQLException {
 		addressBookList.add(
 				addressBookDBService.addNewContact(firstName, lastName, address, city, state, zip, phoneNumber, email));
 	}
-	
-	public void addPersonsWithThread(List<PersonDetails> personDetailsDataList) {
-		Map<Integer, Boolean> addressAdditionStatus = new HashMap<Integer, Boolean>();
-		personDetailsDataList.forEach(addressbookdata -> {
+
+	public int addMultipleRecordsInAddressBookWithThreads(List<PersonDetails> addressBookList) throws AddressBookException {
+		Map<Integer, Boolean> contactsMap = new HashMap<>();
+		addressBookList.forEach(contactsList -> {
 			Runnable task = () -> {
-				addressAdditionStatus.put(addressbookdata.hashCode(), false);
-				System.out.println("Contact Being Added:" + Thread.currentThread().getName());
+				contactsMap.put(contactsList.hashCode(), false);
+				System.out.println("Contact being added: " + Thread.currentThread().getName());
 				try {
-					this.addNewContact(addressbookdata.getFirstName(), addressbookdata.getLastName(),
-							addressbookdata.getAddress(), addressbookdata.getCity(), addressbookdata.getState(),
-							addressbookdata.getZip(), addressbookdata.getPhoneNo(), addressbookdata.getEmail());
-				} catch (AddressBookException e) {
+					this.addNewContact(contactsList.firstName, contactsList.lastName, contactsList.address,
+							contactsList.city, contactsList.state, contactsList.getZip(), contactsList.phoneNo,
+							contactsList.email);
+				} catch (AddressBookException addressBookException) {
+					new AddressBookException("Cannot update using threads",
+							AddressBookException.ExceptionType.DatabaseException);
+				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				addressAdditionStatus.put(addressbookdata.hashCode(), true);
-				System.out.println("Contact Added:" + Thread.currentThread().getName());
+				contactsMap.put(contactsList.hashCode(), true);
+				System.out.println("Contact added: " + Thread.currentThread().getName());
 			};
-			Thread thread = new Thread(task, addressbookdata.getFirstName());
+			Thread thread = new Thread(task, contactsList.getFirstName());
 			thread.start();
 		});
-		while (addressAdditionStatus.containsValue(false)) {
+		while (contactsMap.containsValue(false)) {
 			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
+				Thread.sleep(50);
+			} catch (InterruptedException interruptedException) {
+
 			}
 		}
-		System.out.println(this.addressBookList);
-	}
-
-	public int countEntries(IOService dbIo) {
-		return addressBookList.size();
+		System.out.println(addressBookList);
+		return new AddressBookService().readAddressBookData(IOService.DB_IO).size();
 	}
 }

@@ -2,6 +2,7 @@ package com.blz.addressbook;
 
 public class PersonDetails {
 
+	int id;
 	String firstName;
 	String lastName;
 	String address;
@@ -28,6 +29,14 @@ public class PersonDetails {
 		this.zip = zip;
 		this.phoneNo = phoneNo;
 		this.email = email;
+	}
+
+	public PersonDetails(int id, String firstName, String lastName, String address, String city, String state, int zip,
+			int phoneNumber, String email) {
+
+		new PersonDetails(firstName, lastName, address, city, state, zip, phoneNumber, email);
+		this.id = id;
+
 	}
 
 	public String getFirstName() {
@@ -92,6 +101,21 @@ public class PersonDetails {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((address == null) ? 0 : address.hashCode());
+		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + phoneNo;
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + zip;
+		return result;
 	}
 
 	@Override

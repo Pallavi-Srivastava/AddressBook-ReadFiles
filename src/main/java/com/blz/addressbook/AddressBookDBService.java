@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressBookDBService {
 
@@ -30,6 +32,7 @@ public class AddressBookDBService {
 		System.out.println("Connecting to database:" + jdbcURL);
 		con = DriverManager.getConnection(jdbcURL, username, password);
 		System.out.println("Connection is successful:" + con);
+		con.setAutoCommit(false);
 		return con;
 	}
 
@@ -138,13 +141,15 @@ public class AddressBookDBService {
 	}
 
 	public PersonDetails addNewContact(String firstName, String lastName, String address, String city, String state,
-			int zip, int phoneNumber, String email) throws AddressBookException {
+			int zip, int phoneNumber, String email) throws AddressBookException, SQLException {
 		int personID = -1;
-		PersonDetails personDetails = null;
+		Connection connection=null;
+		PersonDetails personDetails;
 		String query = String.format(
 				"insert into addressbook(FirstName, LastName, Address, City, State, Zip, PhoneNumber, Email) values ('%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s')",
 				firstName, lastName, address, city, state, zip, phoneNumber, email);
-		try (Connection connection = this.getConnection()) {
+		try {
+			connection = this.getConnection();
 			Statement statement = connection.createStatement();
 			int rowChanged = statement.executeUpdate(query, statement.RETURN_GENERATED_KEYS);
 			if (rowChanged == 1) {
@@ -155,6 +160,9 @@ public class AddressBookDBService {
 			personDetails = new PersonDetails(firstName, lastName, address, city, state, zip, phoneNumber, email);
 		} catch (SQLException e) {
 			throw new AddressBookException(e.getMessage(), AddressBookException.ExceptionType.DatabaseException);
+		}
+		finally {
+			connection.commit();
 		}
 		return personDetails;
 	}

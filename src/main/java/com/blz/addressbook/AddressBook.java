@@ -98,22 +98,22 @@ public class AddressBook {
 				case 4:
 					System.out.println(" Enter State ");
 					String input_State = editInput.nextLine();
-					lst.get(index).setCity(input_State);
+					lst.get(index).setState(input_State);
 					break;
 				case 5:
 					System.out.println(" Enter pincode ");
 					int input_Zip = editInput.nextInt();
-					lst.get(index).setCity(Integer.toString(input_Zip));
+					lst.get(index).setZip(Integer.toString(input_Zip));
 					break;
 				case 6:
 					System.out.println(" Enter Mobile number ");
 					int input_Phone = editInput.nextInt();
-					lst.get(index).setZip(input_Phone);
+					lst.get(index).setPhoeNo(input_Phone);
 					break;
 				case 7:
 					System.out.println(" Enter Email id ");
 					String input_Email = editInput.nextLine();
-					lst.get(index).setCity(input_Email);
+					lst.get(index).setEmail(input_Email);
 					break;
 				default:
 					System.out.println(" Enter valid input ");
